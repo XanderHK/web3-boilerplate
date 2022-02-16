@@ -7,7 +7,7 @@ import { ErrorObject, ErrorRequired, IState, reduxWrapper } from '../src/store';
 import Navbar from '../src/components/Connect';
 import { Web3ReactProvider } from "@web3-react/core"
 import { useSelector } from 'react-redux';
-import { getLibrary } from '../src/wallet/utils';
+import { getLibrary } from '../src/contract/utils';
 import Footer from '../src/components/Footer';
 import Message from '../src/components/Message';
 

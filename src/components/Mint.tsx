@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
-import { mint } from "../wallet/utils"
+import { mint } from "../contract/utils"
 import { useDispatch } from 'react-redux';
 import { StoreActions } from "../store";
 

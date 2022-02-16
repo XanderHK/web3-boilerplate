@@ -1,3 +1,7 @@
+Create a cfg.ts file and change the value of CONTRACT_ABI and CONTRACT_ADDRESS. 
+Go to the utils file inside of the contract directory, and make sure to alter the methods that are chained onto `getContract()` to the ones that are described in your smart contract.
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
