@@ -1,5 +1,5 @@
-export const CONTRACT_ADDRESS = "0x44a5ad918aFD2eB50A83d91CA779D64252cAA5A4";
-export const ABI = [
+export const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+export const CONTRACT_ABI = [
     {
         "inputs": [
             {

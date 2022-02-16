@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { ABI, CONTRACT_ADDRESS } from '../config/cfg'
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from '../config/cfg'
 
 export const getLibrary = (provider) => {
     return new ethers.providers.Web3Provider(provider)
@@ -10,7 +10,7 @@ export const getSigner = (provider : ethers.providers.Web3Provider) => {
 }
 
 export const getContract = (provider : ethers.providers.Web3Provider) => {
-    return new ethers.Contract(CONTRACT_ADDRESS, ABI, getSigner(provider))
+    return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, getSigner(provider))
 }
 
 export const getSupply = async(provider : ethers.providers.Web3Provider) => {
