@@ -1,11 +1,12 @@
 import { Transition } from "@headlessui/react";
 import Link from "next/link"
-import router from "next/router"
 import Connect from "./Connect"
 import { useState } from "react";
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter()
     const inactiveLinkClasses = "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
     const activeLinkClasses = "hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium"
     return (
@@ -28,7 +29,14 @@ const Navbar = () => {
                                             <a
                                                 className={router.pathname == "/" ? activeLinkClasses : inactiveLinkClasses}
                                             >
-                                                Volunteers
+                                                Mint
+                                            </a>
+                                        </Link>
+                                        <Link href="/nfts">
+                                            <a
+                                                className={router.pathname == "/nfts" ? activeLinkClasses : inactiveLinkClasses}
+                                            >
+                                                My NFTs
                                             </a>
                                         </Link>
                                     </div>
@@ -92,12 +100,19 @@ const Navbar = () => {
                     >
                         {(ref) => (
                             <div className="md:hidden" id="mobile-menu">
-                                <div ref={ref} className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                                     <Link href="/">
                                         <a
                                             className={router.pathname == "/" ? activeLinkClasses : inactiveLinkClasses}
                                         >
-                                            Volunteers
+                                            Mint
+                                        </a>
+                                    </Link>
+                                    <Link href="/nfts">
+                                        <a
+                                            className={router.pathname == "/nfts" ? activeLinkClasses : inactiveLinkClasses}
+                                        >
+                                            My NFTs
                                         </a>
                                     </Link>
                                 </div>

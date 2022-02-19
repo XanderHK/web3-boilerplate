@@ -1,5 +1,6 @@
 import { createStore, AnyAction } from 'redux';
 import { MakeStore, createWrapper, Context } from 'next-redux-wrapper';
+import { ErrorObject, ErrorRequired } from '../@types';
 
 export enum StoreActions {
     SetWalletId = "SET_WALLET_ID",
@@ -7,12 +8,9 @@ export enum StoreActions {
     SetSuccessMessages = "SET_SUCCESS_MESSAGES"
 }
 
-export type ErrorRequired = {code : string, message : string}
-export type ErrorObject<T> = T & {[key : string] : unknown}
-
 export interface IState {
     walletId?: string
-    errorMessages?: ErrorObject<ErrorRequired>[]
+    errorMessages?: string[]
     successMessages?: string[]
 }
 

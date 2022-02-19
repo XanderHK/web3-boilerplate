@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import 'tailwindcss/tailwind.css'
 
 interface Props {
   message: string

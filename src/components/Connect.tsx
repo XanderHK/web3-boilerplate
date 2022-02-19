@@ -4,44 +4,53 @@ import Modal from "./Modal";
 import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../store';
 import { useWeb3React } from "@web3-react/core";
-import { injected } from "../wallet/connectors"
-
+import { injected, walletconnect } from "../wallet/connectors"
+import MetamaskCard from "./cards/MetamaskCard";
+import WalletConnectCard from "./cards/WalletConnectCard";
+import CoinbaseCard from "./cards/CoinbaseCard";
+import TrustWalletCard from "./cards/TrustWalletCard";
 
 const Connect = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const close = () => setModalOpen(false)
     const open = () => setModalOpen(true)
     const walletId = useSelector<IState>((state) => state.walletId)
-    const {active, account, library, connector, activate, deactivate } = useWeb3React()
+    const { active, account, library, connector, activate, deactivate } = useWeb3React()
 
     const modalBody = () => {
 
-    }
+        const options = (
+            <div className="grid gap-4 grid-cols-2 grid-rows-2">
+                <MetamaskCard close={close} />
+                <WalletConnectCard close={close} />
+                <CoinbaseCard close={close} />
+                <TrustWalletCard close={close} />
+            </div>
+        )
 
-    const connect = async () => {
-        try{
-            await activate(injected)
-            localStorage.setItem('isWalletConnected', "true")
-            close()
-        }catch(exc){
-            console.log(exc)
-        }
+        return (
+            <>
+            {!active ? options : 'Please disconnect your current wallet'}
+            </>
+        )
     }
 
     const disconnect = async () => {
-        try{
+        try {
             deactivate()
-            localStorage.setItem('isWalletConnected', "false")
+            localStorage.removeItem('isWalletConnected')
+            localStorage.removeItem('isProviderWalletConnect')
             close()
-        }catch(exc){
+        } catch (exc) {
             console.log(exc)
         }
     }
 
     useEffect(() => {
-        const connectWalletOnPageLoad = () => {
-            if(localStorage?.getItem('isWalletConnected') === 'true'){
-                connect()
+        const connectWalletOnPageLoad = async () => {
+            if (localStorage?.getItem('isWalletConnected') === 'true') {
+                // if(localStorage?.getItem('isProviderWalletConnect') !== 'true') connect()
+                await activate(injected)
             }
         }
         connectWalletOnPageLoad()
@@ -61,9 +70,10 @@ const Connect = () => {
             >
                 {modalOpen && <Modal
                     handleClose={close}
-                    handleSubmit={active ? disconnect : connect}
+                    handleSubmit={disconnect}
                     title="Connect Wallet"
-                    content={modalBody} />}
+                    content={modalBody}
+                    submitText="Disconnect" />}
             </AnimatePresence>
         </>
     )
