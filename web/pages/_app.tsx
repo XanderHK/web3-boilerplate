@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import React, { FC } from 'react';
 import { AppContext, AppProps } from 'next/app';
-import {IState, reduxWrapper } from '../src/store';
+import { IState, reduxWrapper } from '../src/store';
 import Navbar from '../src/components/Navbar';
 import { Web3ReactProvider } from "@web3-react/core"
 import { useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import Message from '../src/components/Message';
 
 const App: FC<AppProps> & { getInitialProps: Function } = ({ Component, pageProps }: AppProps) => {
 
-  const errors : string[] = useSelector<IState>((state) => state.errorMessages) as string[] ?? []
+  const errors: string[] = useSelector<IState>((state) => state.errorMessages) as string[] ?? []
 
   return (
     <Web3ReactProvider getLibrary={(provider: any) => getLibrary(provider)}>

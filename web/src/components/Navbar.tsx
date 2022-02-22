@@ -121,7 +121,9 @@ const Navbar = () => {
                     </Transition>
                 </nav>
             </div>
-            <Connect />
+            <div className="flex justify-end">
+                <Connect />
+            </div>
         </>
     )
 }

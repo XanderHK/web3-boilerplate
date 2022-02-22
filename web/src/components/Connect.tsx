@@ -2,7 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { useDispatch, useSelector } from 'react-redux';
-import { IState } from '../store';
+import { DeleteActions, IState } from '../store';
 import { useWeb3React } from "@web3-react/core";
 import { injected, walletconnect } from "../wallet/connectors"
 import MetamaskCard from "./cards/MetamaskCard";
@@ -11,10 +11,10 @@ import CoinbaseCard from "./cards/CoinbaseCard";
 import TrustWalletCard from "./cards/TrustWalletCard";
 
 const Connect = () => {
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false)
     const close = () => setModalOpen(false)
     const open = () => setModalOpen(true)
-    const walletId = useSelector<IState>((state) => state.walletId)
+    const dispatch = useDispatch()
     const { active, account, library, connector, activate, deactivate } = useWeb3React()
 
     const modalBody = () => {
@@ -30,7 +30,7 @@ const Connect = () => {
 
         return (
             <>
-            {!active ? options : 'Please disconnect your current wallet'}
+                {!active ? options : 'Please disconnect your current wallet'}
             </>
         )
     }
@@ -38,8 +38,9 @@ const Connect = () => {
     const disconnect = async () => {
         try {
             deactivate()
+            dispatch({ type: DeleteActions.DeleteAll })
             localStorage.removeItem('isWalletConnected')
-            localStorage.removeItem('isProviderWalletConnect')
+            localStorage.removeItem('provider')
             close()
         } catch (exc) {
             console.log(exc)
@@ -60,7 +61,7 @@ const Connect = () => {
         <>
             <button
                 onClick={() => modalOpen ? close() : open()}
-                className="w-full mt-6 text-indigo-50 font-bold bg-indigo-600 py-3 rounded-md hover:bg-indigo-500 transition duration-300"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
             >{active ? <span>Connected with: {account.substr(0, 8)}...{account.substr(-8, 8)}</span> : <span>Connect</span>}</button>
 
             <AnimatePresence

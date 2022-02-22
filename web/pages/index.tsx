@@ -1,10 +1,7 @@
-import { useWeb3React } from "@web3-react/core"
 import Head from 'next/head';
 import Mint from "../src/components/Mint"
 
 const Home = () => {
-	const { library } = useWeb3React()
-
 	return (
 		<>
 			<Head>
