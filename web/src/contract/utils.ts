@@ -25,7 +25,7 @@ export const mint = async (provider: ethers.providers.Web3Provider) => {
         });
 
         await transaction.wait()
-
+        await newMintEntry(provider)
         return [transaction.hash, null]
     } catch (exc) {
         return [null, exc]
@@ -36,28 +36,6 @@ const parseIpfsURI = (uri: string) => {
     const location = uri.split("ipfs://").join("")
     return `https://ipfs.io/ipfs/${location}`
 }
-
-export const getNfts = async (provider: ethers.providers.Web3Provider) => {
-    // @todo pull the loop to the frontend so it can change the state immediately when match is found 
-    try {
-        const address = await getSigner(provider).getAddress()
-        const supply = await getSupply(provider)
-        const contract = getContract(provider)
-        const nftImageURIs = []
-        for (let i = 1; i <= supply; i++) {
-            const owner = await contract.ownerOf(i)
-            if (owner === address) {
-                const tokenURI = await contract.tokenURI(i)
-                const res = await axios.get(parseIpfsURI(tokenURI))
-                nftImageURIs.push(parseIpfsURI(res.data.image))
-            }
-        }
-        return [nftImageURIs, null]
-    } catch (exc) {
-        return [null, exc]
-    }
-}
-
 
 export const getAllNftRelations = async (provider: ethers.providers.Web3Provider) => {
     try {
@@ -93,12 +71,60 @@ export const populateDb = async (provider: ethers.providers.Web3Provider) => {
     try {
         const res = await axios.post(API_URL + '/populate', result, {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             }
         })
-
-        console.log(res)
     } catch (exc) {
         console.log(exc)
+    }
+}
+
+const newMintEntry = async (provider: ethers.providers.Web3Provider) => {
+    const lastMintId = await getSupply(provider)
+    const contract = getContract(provider)
+    const tokenURI = await contract.tokenURI(lastMintId)
+    const res = await axios.get(parseIpfsURI(tokenURI))
+
+    const newMintData = {
+        account: await getSigner(provider).getAddress(),
+        uri: parseIpfsURI(res.data.image)
+    }
+
+    try {
+        axios.post(`${API_URL}/add`, newMintData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    } catch (exc) {
+        console.log(exc)
+    }
+}
+
+export const fetchNfts = async () => {
+    try {
+        const res = await axios.get(API_URL + `/accounts/}`,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+        return [res.data, null]
+    } catch (exc) {
+        return [null, exc]
+    }
+}
+
+export const fetchNftsOfConnected = async (account: string) => {
+    try {
+        const res = await axios.get(API_URL + `/accounts/${account}`,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+        return [res.data, null]
+    } catch (exc) {
+        return [null, exc]
     }
 }

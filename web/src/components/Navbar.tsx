@@ -36,7 +36,7 @@ const Navbar = () => {
                                             <a
                                                 className={router.pathname == "/nfts" ? activeLinkClasses : inactiveLinkClasses}
                                             >
-                                                My NFTs
+                                                NFTs
                                             </a>
                                         </Link>
                                     </div>
@@ -112,7 +112,7 @@ const Navbar = () => {
                                         <a
                                             className={router.pathname == "/nfts" ? activeLinkClasses : inactiveLinkClasses}
                                         >
-                                            My NFTs
+                                            NFTs
                                         </a>
                                     </Link>
                                 </div>

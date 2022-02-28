@@ -9,9 +9,11 @@ import MetamaskCard from "./cards/MetamaskCard";
 import WalletConnectCard from "./cards/WalletConnectCard";
 import CoinbaseCard from "./cards/CoinbaseCard";
 import TrustWalletCard from "./cards/TrustWalletCard";
+import { useRouter } from "next/router";
 
 const Connect = () => {
     const [modalOpen, setModalOpen] = useState(false)
+    const router = useRouter()
     const close = () => setModalOpen(false)
     const open = () => setModalOpen(true)
     const dispatch = useDispatch()
@@ -41,6 +43,7 @@ const Connect = () => {
             dispatch({ type: DeleteActions.DeleteAll })
             localStorage.removeItem('isWalletConnected')
             localStorage.removeItem('provider')
+            router.push('/')
             close()
         } catch (exc) {
             console.log(exc)

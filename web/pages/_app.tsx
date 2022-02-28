@@ -12,12 +12,16 @@ import Message from '../src/components/Message';
 const App: FC<AppProps> & { getInitialProps: Function } = ({ Component, pageProps }: AppProps) => {
 
   const errors: string[] = useSelector<IState>((state) => state.errorMessages) as string[] ?? []
+  const successes: string[] = useSelector<IState>((state) => state.successMessages) as string[] ?? []
 
   return (
     <Web3ReactProvider getLibrary={(provider: any) => getLibrary(provider)}>
       <Navbar />
       {errors.map((error, index: number) => {
         return <Message message={error} key={index} />
+      })}
+      {successes.map((message, index: number) => {
+        return <Message message={message} key={index} />
       })}
       <Component {...pageProps} />
       <Footer />
