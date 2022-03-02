@@ -24,28 +24,32 @@ export class ApiService {
     }
 
     async add(body: NftMetaDataDTO) {
-        const account = await this.accountRepository.findOne({ account: body.account })
-        const uri = await this.uriRepository.findOne({ uri: body.uri })
-        if (!account) {
-            const account: AccountEntity = this.accountRepository.create({
-                account: body.account,
-                uris: []
-            });
-            await this.accountRepository.save(account);
+        try {
+            const account = await this.accountRepository.findOne({ account: body.account })
+            const uri = await this.uriRepository.findOne({ uri: body.uri })
+            if (!account) {
+                const account: AccountEntity = this.accountRepository.create({
+                    account: body.account,
+                    uris: []
+                });
+                await this.accountRepository.save(account);
 
-            const uri: UriEntity = this.uriRepository.create({
-                uri: body.uri,
-                account: account
-            })
+                const uri: UriEntity = this.uriRepository.create({
+                    uri: body.uri,
+                    account: account
+                })
 
-            await this.uriRepository.save(uri)
-        }
+                await this.uriRepository.save(uri)
+            }
 
-        if (!uri) {
-            await this.uriRepository.save(this.uriRepository.create({
-                uri: body.uri,
-                account: account
-            }))
+            if (!uri) {
+                await this.uriRepository.save(this.uriRepository.create({
+                    uri: body.uri,
+                    account: account
+                }))
+            }
+        } catch (exc) {
+            console.log(exc)
         }
     }
 

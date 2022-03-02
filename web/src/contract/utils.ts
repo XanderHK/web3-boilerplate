@@ -128,3 +128,22 @@ export const fetchNftsOfConnected = async (account: string) => {
         return [null, exc]
     }
 }
+
+type TransferArgs = {
+    provider: ethers.providers.Web3Provider, to: string, tokenId: number
+}
+
+export const transfer = async ({ provider, to, tokenId }: TransferArgs) => {
+    try {
+        const contract = getContract(provider)
+        const from = await getSigner(provider).getAddress();
+        const transaction = await contract["safeTransferFrom(address,address,uint256)"](from, to, tokenId);
+        await transaction.wait()
+        // delete URI on the from address
+        // add URI on the to address
+        // remove specific nft from redux
+        return [transaction.hash, null]
+    } catch (exc) {
+        return [null, exc]
+    }
+}

@@ -9,14 +9,15 @@ export enum StoreActions {
 }
 
 export enum DeleteActions {
-    DeleteAll = "DELETE_ALL"
+    DeleteAll = "DELETE_ALL",
+    DeleteNft = "DELETE_NFT"
 }
 
 export interface IState {
     walletId?: string
     errorMessages?: string[]
     successMessages?: string[]
-    nftImageURIs?: string[]
+    nftImageURIs?: { id: number, uri: string }[]
 }
 
 const initialState = {}
@@ -33,9 +34,20 @@ const reducer = (state: IState = initialState, action: AnyAction) => {
             return { ...state, successMessages: [...successes, action.payload] }
         case StoreActions.SetNftImageURIs:
             const nftImageURIs = state.nftImageURIs ?? []
-            return { ...state, nftImageURIs: Array.from(new Set([...nftImageURIs, ...action.payload])) }
+            const payload = action.payload
+
+            for (const item of payload) {
+                const result = nftImageURIs.some(e => e.id === item.id)
+                if (!result) nftImageURIs.push(item)
+            }
+
+            return { ...state, nftImageURIs: nftImageURIs }
         case DeleteActions.DeleteAll:
             return {}
+        case DeleteActions.DeleteNft:
+            const filtered = state.nftImageURIs.filter(e => e.id !== action.payload)
+            console.log(filtered)
+            return { ...state, nftImageURIs: filtered }
         default:
             return state
     }

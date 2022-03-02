@@ -7,8 +7,6 @@ import { useWeb3React } from "@web3-react/core";
 import { injected, walletconnect } from "../wallet/connectors"
 import MetamaskCard from "./cards/MetamaskCard";
 import WalletConnectCard from "./cards/WalletConnectCard";
-import CoinbaseCard from "./cards/CoinbaseCard";
-import TrustWalletCard from "./cards/TrustWalletCard";
 import { useRouter } from "next/router";
 
 const Connect = () => {
@@ -25,8 +23,6 @@ const Connect = () => {
             <div className="grid gap-4 grid-cols-2 grid-rows-2">
                 <MetamaskCard close={close} />
                 <WalletConnectCard close={close} />
-                <CoinbaseCard close={close} />
-                <TrustWalletCard close={close} />
             </div>
         )
 
