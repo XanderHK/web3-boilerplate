@@ -55,7 +55,11 @@ export class ApiService {
 
     async populate(body: NftMetaDataDTO[]) {
         for (const entry of body) {
-            this.add(entry)
+            try {
+                this.add(entry)
+            } catch (exc) {
+                continue
+            }
         }
     }
 }
