@@ -49,8 +49,8 @@ const Connect = () => {
     useEffect(() => {
         const connectWalletOnPageLoad = async () => {
             if (localStorage?.getItem('isWalletConnected') === 'true') {
-                // if(localStorage?.getItem('isProviderWalletConnect') !== 'true') connect()
-                await activate(injected)
+                if (localStorage?.getItem('provider') === "metamask") await activate(injected)
+                if (localStorage?.getItem('provider') === "walletconnect") await activate(walletconnect, undefined, true)
             }
         }
         connectWalletOnPageLoad()

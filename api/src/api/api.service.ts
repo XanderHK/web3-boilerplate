@@ -27,6 +27,7 @@ export class ApiService {
         try {
             const account = await this.accountRepository.findOne({ account: body.account })
             const uri = await this.uriRepository.findOne({ uri: body.uri })
+
             if (!account) {
                 const account: AccountEntity = this.accountRepository.create({
                     account: body.account,
@@ -36,6 +37,7 @@ export class ApiService {
 
                 const uri: UriEntity = this.uriRepository.create({
                     uri: body.uri,
+                    tokenId: body.tokenId,
                     account: account
                 })
 
@@ -45,21 +47,31 @@ export class ApiService {
             if (!uri) {
                 await this.uriRepository.save(this.uriRepository.create({
                     uri: body.uri,
+                    tokenId: body.tokenId,
                     account: account
                 }))
             }
+
+            // todo check if this works properly next transfer
+            if (account.uris?.filter(e => e.tokenId === uri.tokenId).length <= 0) {
+                console.log(uri)
+                await this.uriRepository.delete({ uri: uri.uri })
+                await this.uriRepository.save(this.uriRepository.create({
+                    uri: body.uri,
+                    tokenId: body.tokenId,
+                    account: account
+                }))
+            }
+
         } catch (exc) {
             console.log(exc)
         }
     }
 
-    async populate(body: NftMetaDataDTO[]) {
-        for (const entry of body) {
-            try {
-                this.add(entry)
-            } catch (exc) {
-                continue
-            }
-        }
+    async removeURI(uri: string) {
+        const foundUri = await this.uriRepository.find({ uri: uri })
+        if (foundUri.length < 1) return
+        const result = await this.uriRepository.delete({ uri: uri })
+        return result
     }
 }

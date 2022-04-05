@@ -1,9 +1,10 @@
 import { useWeb3React } from "@web3-react/core"
 import { CardProps } from "../../@types"
+import { isMobileDevice } from "../../contract/utils"
 import { injected } from "../../wallet/connectors"
 
-const MetamaskCard = ({close} : CardProps) => {
-    const { activate} = useWeb3React()
+const MetamaskCard = ({ close }: CardProps) => {
+    const { activate } = useWeb3React()
 
     const connect = async () => {
         try {

@@ -17,7 +17,7 @@ export interface IState {
     walletId?: string
     errorMessages?: string[]
     successMessages?: string[]
-    nftImageURIs?: { id: number, uri: string }[]
+    nftImageURIs?: Map<number, string>
 }
 
 const initialState = {}
@@ -33,21 +33,18 @@ const reducer = (state: IState = initialState, action: AnyAction) => {
             const successes = state.errorMessages ?? []
             return { ...state, successMessages: [...successes, action.payload] }
         case StoreActions.SetNftImageURIs:
-            const nftImageURIs = state.nftImageURIs ?? []
-            const payload = action.payload
-
+            const payload: { id?: number, uri: string, tokenId: number }[] = action.payload
+            const nftImageURIs = state.nftImageURIs ?? new Map()
             for (const item of payload) {
-                const result = nftImageURIs.some(e => e.id === item.id)
-                if (!result) nftImageURIs.push(item)
+                nftImageURIs.set(item.tokenId, item.uri)
             }
 
-            return { ...state, nftImageURIs: nftImageURIs }
+            return <IState>{ ...state, nftImageURIs: nftImageURIs }
         case DeleteActions.DeleteAll:
             return {}
         case DeleteActions.DeleteNft:
-            const filtered = state.nftImageURIs.filter(e => e.id !== action.payload)
-            console.log(filtered)
-            return { ...state, nftImageURIs: filtered }
+            state.nftImageURIs.delete(action.payload)
+            return <IState>{ ...state }
         default:
             return state
     }

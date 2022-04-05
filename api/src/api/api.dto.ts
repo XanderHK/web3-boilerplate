@@ -8,4 +8,7 @@ export class NftMetaDataDTO {
 
     @IsNotEmpty()
     uri: string;
+
+    @IsNotEmpty()
+    tokenId: number;
 }

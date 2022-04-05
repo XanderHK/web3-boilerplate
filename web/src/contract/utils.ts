@@ -32,51 +32,10 @@ export const mint = async (provider: ethers.providers.Web3Provider) => {
     }
 }
 
+
 const parseIpfsURI = (uri: string) => {
     const location = uri.split("ipfs://").join("")
     return `https://ipfs.io/ipfs/${location}`
-}
-
-export const getAllNftRelations = async (provider: ethers.providers.Web3Provider) => {
-    try {
-        const supply = await getSupply(provider)
-        const contract = getContract(provider)
-
-        type NftRelation = {
-            account: string,
-            uri: string
-        }
-
-        const nftRelations: NftRelation[] = []
-        for (let i = 1; i <= supply; i++) {
-            const owner = await contract.ownerOf(i)
-            const tokenURI = await contract.tokenURI(i)
-            const res = await axios.get(parseIpfsURI(tokenURI))
-
-            nftRelations.push({
-                account: owner,
-                uri: parseIpfsURI(res.data.image)
-            })
-        }
-        return [nftRelations, null]
-    } catch (exc) {
-        return [null, exc]
-    }
-}
-
-
-export const populateDb = async (provider: ethers.providers.Web3Provider) => {
-    const [result, err] = await getAllNftRelations(provider)
-    if (err) return
-    try {
-        const res = await axios.post(API_URL + '/populate', result, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-    } catch (exc) {
-        console.log(exc)
-    }
 }
 
 const newMintEntry = async (provider: ethers.providers.Web3Provider) => {
@@ -87,7 +46,8 @@ const newMintEntry = async (provider: ethers.providers.Web3Provider) => {
 
     const newMintData = {
         account: await getSigner(provider).getAddress(),
-        uri: parseIpfsURI(res.data.image)
+        uri: parseIpfsURI(res.data.image),
+        tokenId: lastMintId
     }
 
     try {
@@ -139,11 +99,80 @@ export const transfer = async ({ provider, to, tokenId }: TransferArgs) => {
         const from = await getSigner(provider).getAddress();
         const transaction = await contract["safeTransferFrom(address,address,uint256)"](from, to, tokenId);
         await transaction.wait()
+
+        const tokenURI = await contract.tokenURI(tokenId)
+        const res = await axios.get(parseIpfsURI(tokenURI))
+        const imgURI = parseIpfsURI(res.data.image)
+
         // delete URI on the from address
+        await axios.delete(API_URL + `/remove-uri/${encodeURIComponent(imgURI)}`,
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
         // add URI on the to address
+        const newMintData = {
+            account: to,
+            uri: imgURI
+        }
+
+        await axios.post(`${API_URL}/add`, newMintData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         // remove specific nft from redux
         return [transaction.hash, null]
     } catch (exc) {
         return [null, exc]
     }
+}
+
+export const populateNftsByAddress = async (provider: ethers.providers.Web3Provider) => {
+    try {
+        const contract = getContract(provider)
+        const from = await getSigner(provider).getAddress();
+        const tokens = await contract.walletOfOwner(from)
+        const uris = await Promise.all(tokens?.map(async (e) => {
+            const decimal = parseInt(e._hex, 16)
+            const tokenURI = await contract.tokenURI(decimal)
+            const res = await axios.get(parseIpfsURI(tokenURI))
+            const imgURI = parseIpfsURI(res.data.image)
+
+            const data = {
+                account: await getSigner(provider).getAddress(),
+                uri: imgURI,
+                tokenId: decimal
+            }
+
+            await axios.post(`${API_URL}/add`, data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            return imgURI
+        }));
+
+        // console.log(uris)
+
+        return [uris, null]
+    } catch (exc) {
+        console.log(exc)
+        return [null, exc]
+    }
+}
+
+
+export const createSale = async () => {
+
+}
+
+export const buyNft = async () => {
+
+}
+
+export const isMobileDevice = () => {
+    return 'ontouchstart' in window || 'onmsgesturechange' in window
 }

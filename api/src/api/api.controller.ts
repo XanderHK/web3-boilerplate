@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpException,
     HttpStatus,
@@ -26,13 +27,13 @@ export class ApiController {
         return this.apiService.getAccount(identifier)
     }
 
-    @Post('/populate')
-    async populate(@Body() body: NftMetaDataDTO[]) {
-        this.apiService.populate(body)
-    }
-
     @Post('/add')
     async add(@Body() body: NftMetaDataDTO) {
         this.apiService.add(body)
+    }
+
+    @Delete('/remove-uri/:uri')
+    async removeUri(@Param('uri') uri: string) {
+        this.apiService.removeURI(decodeURIComponent(uri))
     }
 }

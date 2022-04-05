@@ -17,6 +17,11 @@ export default class UriEntity {
     })
     uri: string;
 
+    @Column({
+        unique: true,
+    })
+    tokenId: number;
+
     @ManyToOne(
         (type) => AccountEntity,
         (accountEntity) => accountEntity.uris,

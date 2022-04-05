@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { DeleteActions, StoreActions } from "../store";
 import { useState } from "react";
 
-const Transfer = ({ tokenId, close }) => {
+const Transfer = ({ tokenId, close, tokenUri }) => {
 
     const { library, active } = useWeb3React()
     const dispatch = useDispatch()
@@ -12,18 +12,17 @@ const Transfer = ({ tokenId, close }) => {
 
     const transferOnClick = async () => {
         if (active) {
-            // 0x6CD7Acf90AaB4844255bBD6B3dC01392f291AB72
             if (!to) {
                 dispatch({ type: StoreActions.SetErrorMessages, payload: "Please fill in a address." })
                 return
             }
             const [result, err] = await transfer({ provider: library, to: to, tokenId: Number(tokenId) })
+            console.log(result, err)
             if (err) {
-                dispatch({ type: StoreActions.SetErrorMessages, payload: "Invalid Address" })
+                dispatch({ type: StoreActions.SetErrorMessages, payload: "Something went wrong during the transfer." })
                 return;
             }
-            console.log(result)
-            dispatch({ type: StoreActions.SetSuccessMessages, payload: 'Transfer succesful!' })
+            dispatch({ type: StoreActions.SetSuccessMessages, payload: `Transfer succesful! ${result}` })
             dispatch({ type: DeleteActions.DeleteNft, payload: tokenId })
         }
         close()
